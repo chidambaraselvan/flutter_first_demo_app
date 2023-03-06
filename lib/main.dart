@@ -1,6 +1,7 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_first_demo_app/views/login_view.dart';
+import 'package:flutter_first_demo_app/views/register_view.dart';
 
 import 'firebase_options.dart';
 
@@ -21,6 +22,10 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.blue,
       ),
       home: const HomePage(),
+      routes: {
+        '/login/': (context) => const LoginView(),
+        '/register/': (context) => const RegisterView()
+      },
     );
   }
 }
@@ -30,72 +35,24 @@ class HomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Home'),
+    return FutureBuilder(
+      future: Firebase.initializeApp(
+        options: DefaultFirebaseOptions.currentPlatform,
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: FutureBuilder(
-          future: Firebase.initializeApp(
-            options: DefaultFirebaseOptions.currentPlatform,
-          ),
-          builder: (context, snapshot) {
-            switch (snapshot.connectionState) {
-              case ConnectionState.done:
-                final user = FirebaseAuth.instance.currentUser;
-                if (user?.emailVerified ?? false) {
-                  print('user is verified');
-                } else {
-                  print('User not yet verified');
-                }
-                return const Text('Done');
-              default:
-                return const Text('Loading...');
-            }
-          },
-        ),
-      ),
-    );
-  }
-}
-
-class HomeTitleWidget extends StatelessWidget {
-  const HomeTitleWidget({
-    Key? key,
-  }) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: const [
-            Padding(
-              padding: EdgeInsets.all(8.0),
-              child: Text("Trending"),
-            ),
-            Padding(
-              padding: EdgeInsets.all(8.0),
-              child: Text("Show All"),
-            ),
-          ],
-        ),
-        SingleChildScrollView(
-          scrollDirection: Axis.horizontal,
-          padding: const EdgeInsets.all(12.0),
-          child: Row(
-            children: const [
-              Card(child: Text('item1')),
-              Text('item2'),
-              Text('item3'),
-              Text('item4'),
-              Text('item5')
-            ],
-          ),
-        )
-      ],
+      builder: (context, snapshot) {
+        switch (snapshot.connectionState) {
+          case ConnectionState.done:
+            // final user = FirebaseAuth.instance.currentUser;
+            // if (user?.emailVerified ?? false) {
+            //   return const Text('Done');
+            // } else {
+            //   return const VerifyEmailView();
+            // }
+            return const LoginView();
+          default:
+            return const Text('Loading...');
+        }
+      },
     );
   }
 }
